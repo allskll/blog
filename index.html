@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL BLOG</title>
+    <style>
+        body { 
+            background-color: #000; 
+            color: #ccc; 
+            font-family: "Consolas", monospace; 
+            padding: 20px;
+            
+            /* 这里已经帮您改大了字体 */
+            font-size: 20px; 
+        }
+        .blog-line { display: flex; margin-bottom: 8px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        
+        /* 字体变大后，时间栏也需要宽一点，不然会对不齐 */
+        .time { color: #666; min-width: 210px; } 
+        
+        .content { flex-grow: 1; margin-right: 15px; white-space: pre-wrap; }
+        .tag { color: #444; border: 1px solid #222; padding: 0 4px; border-radius: 2px; font-size: 0.8em; height: fit-content; }
+        
+        /* 颜色定义 */
+        .w { color: #ddd; } /* 白 */
+        .r { color: #ff3333; } /* 红 */
+        .b { color: #4444ff; } /* 蓝 */
+        .g { color: #00ff00; } /* 绿 */
+
+        /* ============================ */
+        /* 以下是手机端适配代码      */
+        /* ============================ */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* 手机屏幕小，边距改小一点 */
+            }
+            .blog-line {
+                flex-direction: column; /* 变成了“垂直排列” */
+                align-items: flex-start;
+                margin-bottom: 15px; /* 手机上行间距大一点 */
+            }
+            .time {
+                min-width: auto; /* 取消固定宽度 */
+                margin-bottom: 4px; /* 时间和正文拉开一点点距离 */
+                font-size: 0.8em; /* 手机上时间字体稍微小一点，好看 */
+                color: #555;
+            }
+            .content {
+                margin-right: 0;
+                width: 100%; /* 文字占满全宽 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="blog-container"></div>
+
+    <script>
+        // 定义一个函数，用来把文章打印到屏幕上
+        function add(time, text, color, tag) {
+            const container = document.getElementById('blog-container');
+            if (!color) color = 'w';
+            const html = `
+            <div class="blog-line">
+                <span class="time">[${time}]</span>
+                <span class="content ${color}">${text}</span>
+                <span class="tag">${tag}</span>
+            </div>`;
+            container.insertAdjacentHTML('afterbegin', html);
+        }
+    </script>
+
+    <script src="data.js"></script>
+</body>
+</html>
