@@ -51,6 +51,15 @@
                 width: 100%; /* 文字占满全宽 */
             }
         }
+        /* === 图片样式：防止图片太大撑破手机屏幕 === */
+        .content img {
+            max-width: 100%;      /* 宽度最大不超过屏幕 */
+            border: 2px solid #333; /*以此边框致敬复古终端 */
+            margin-top: 10px;     /* 和文字拉开点距离 */
+            display: block;       /* 让图片独占一行 */
+            opacity: 0.9;         /* 稍微透明一点点，更有极客味 */
+        }
+
     </style>
 </head>
 <body>
