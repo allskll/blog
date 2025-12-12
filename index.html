@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL BLOG</title>
+    <title>blog.yuk1no.com</title>
     <style>
         /* === 基础样式 === */
         body { 
@@ -11,14 +11,14 @@
             color: #ccc; 
             font-family: "Consolas", "Courier New", monospace; 
             padding: 20px;
-            font-size: 18px; /* 电脑端字体 */
+            font-size: 18px;
             max-width: 1000px;
-            margin: 0 auto; /* 居中显示 */
+            margin: 0 auto;
         }
         
         /* 博客列表容器 */
         #blog-container {
-            min-height: 500px; /* 防止翻页时页面乱跳 */
+            min-height: 500px;
         }
 
         .blog-line { 
@@ -26,7 +26,7 @@
             margin-bottom: 25px; 
             border-bottom: 1px dashed #333; 
             padding-bottom: 15px; 
-            animation: fadeIn 0.3s ease; /* 翻页时的淡入动画 */
+            animation: fadeIn 0.3s ease;
         }
         
         @keyframes fadeIn {
@@ -43,7 +43,6 @@
             line-height: 1.6;
         }
         
-        /* 图片样式 */
         .content img {
             max-width: 100%;
             border: 2px solid #333;
@@ -68,11 +67,11 @@
         .b { color: #5555ff; }
         .g { color: #00ff00; }
 
-        /* === 翻页控制器样式 (核心新增) === */
+        /* === 翻页控制器样式 === */
         #pagination {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 2px solid #333;
+            border-top: 2px solid #333; /* 翻页栏上面的实线 */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -101,6 +100,27 @@
 
         #page-info { color: #666; }
 
+        /* === 底部 Footer 样式 (新增) === */
+        footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #333; /* 底部上面的虚线 */
+            text-align: center;
+            color: #555;
+            font-size: 0.8em;
+        }
+        
+        footer a {
+            color: #777;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        footer a:hover {
+            color: #aaa;
+            text-decoration: underline;
+        }
+
         /* === 手机端适配 === */
         @media (max-width: 600px) {
             body { padding: 10px; font-size: 16px; }
@@ -108,7 +128,6 @@
             .time { margin-bottom: 5px; font-size: 0.9em; color: #555; }
             .content { width: 100%; margin-right: 0; }
             .tag { margin-top: 5px; align-self: flex-start; }
-            
             #pagination { font-size: 0.9em; }
             .page-btn { padding: 8px 12px; }
         }
@@ -124,36 +143,31 @@
         <button id="btn-next" class="page-btn" onclick="changePage(1)">[ NEXT > ]</button>
     </div>
 
+    <footer>
+        <p>Email: <a href="mailto:contact@yuk1no.com">contact@yuk1no.com</a></p>
+        <p>© 2025 TERMINAL BLOG. All systems operational.</p>
+    </footer>
+
     <script>
-        // === 1. 配置区域 ===
-        const ITEMS_PER_PAGE = 5; // 这里设置每页显示几条博客！
+        // === 配置区域 ===
+        const ITEMS_PER_PAGE = 5; 
         
-        // === 2. 数据存储 ===
-        // 我们不再直接显示，而是把所有博客先存进这个数组
         let allPosts = []; 
         let currentPage = 1;
 
-        // 重写 add 函数：只存数据，不画图
         function add(time, text, color, tag) {
             if (!color) color = 'w';
             allPosts.push({ time, text, color, tag });
         }
 
-        // === 3. 渲染逻辑 (核心) ===
         function renderPosts() {
             const container = document.getElementById('blog-container');
-            container.innerHTML = ''; // 先清空屏幕
+            container.innerHTML = ''; 
 
-            // 既然 add 是按顺序 push 的，那么数组最后面的是最新的。
-            // 我们需要反转顺序显示吗？通常博客是“最新的在最上面”。
-            // 为了方便切片，我们在数据加载完后已经做了一次 reverse，这里直接切片即可。
-
-            // 计算这一页该显示数组里的哪几条 (Slice切片)
             const start = (currentPage - 1) * ITEMS_PER_PAGE;
             const end = start + ITEMS_PER_PAGE;
             const postsToShow = allPosts.slice(start, end);
 
-            // 生成 HTML
             let htmlStr = '';
             postsToShow.forEach(post => {
                 htmlStr += `
@@ -165,10 +179,7 @@
             });
             container.innerHTML = htmlStr;
 
-            // 更新翻页按钮状态
             updatePaginationUI();
-            
-            // 每次翻页自动回到顶部
             window.scrollTo(0, 0);
         }
 
@@ -179,7 +190,6 @@
             const btnPrev = document.getElementById('btn-prev');
             const btnNext = document.getElementById('btn-next');
 
-            // 处理上一页按钮
             if (currentPage === 1) {
                 btnPrev.classList.add('disabled');
                 btnPrev.disabled = true;
@@ -188,7 +198,6 @@
                 btnPrev.disabled = false;
             }
 
-            // 处理下一页按钮
             if (currentPage >= totalPages) {
                 btnNext.classList.add('disabled');
                 btnNext.disabled = true;
@@ -208,21 +217,16 @@
             }
         }
         
-        // === 键盘翻页支持 (黑客喜欢用键盘) ===
         document.addEventListener('keydown', function(event) {
-            if (event.key === "ArrowLeft") changePage(-1); // 左箭头上一页
-            if (event.key === "ArrowRight") changePage(1); // 右箭头下一页
+            if (event.key === "ArrowLeft") changePage(-1); 
+            if (event.key === "ArrowRight") changePage(1); 
         });
-
     </script>
 
     <script src="data.js"></script>
     
     <script>
-        // 数据加载完毕后执行
-        // 1. 因为 data.js 是按时间正序写的，我们要反转一下，让最新的在最前
         allPosts.reverse();
-        // 2. 初始化显示第一页
         renderPosts();
     </script>
 </body>
