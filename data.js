@@ -4,3 +4,4 @@ add("2025-12-12 05:10", "预测faze和vitality会进入布达佩斯major决赛",
 add("2025-12-12 17:29", "test test test<br><img src='imgs/20251212172941_9884.jpg'>", "w", "#test");
 
 add("2025-12-13 20:04", "I'm fine.Drink water and take a breath.", "w", "#日常");
+add("2025-12-14 18:38", "It's hard to get up early if you sleep late", "w", "#daily");
