@@ -71,7 +71,7 @@ if [ -z "$color" ]; then color="w"; fi
 
 # 4. 输入分类
 read -e -p "[分类 默认日常]: " tag
-if [ -z "$tag" ]; then tag="日常"; fi
+if [ -z "$tag" ]; then tag="daily"; fi
 if [[ $tag != \#* ]]; then tag="#$tag"; fi
 
 # 5. 获取时间
