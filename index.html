@@ -10,10 +10,66 @@
             background-color: #000; 
             color: #ccc; 
             font-family: "Consolas", "Courier New", monospace; 
-            padding: 20px;
+            /* 方案一：增加顶部内边距，让博客整体下移 */
+            padding: 80px 20px 20px 20px; 
             font-size: 18px;
             max-width: 1000px;
             margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        /* === 加载动画样式 === */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .typing-wrapper {
+            display: inline-block;
+        }
+
+        #loader-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid #00ff00; /* 模拟光标 */
+            color: #00ff00;
+            font-size: 1.5em;
+            width: 0;
+            /* 动画：打字(1.5s), 光标闪烁(0.7s), 整体淡出(0.5s) */
+            animation: 
+                typing 1.5s steps(25, end) forwards,
+                blink-caret 0.7s step-end infinite,
+                fadeOutContent 0.5s 2.5s forwards;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00ff00; }
+        }
+
+        @keyframes fadeOutContent {
+            to { opacity: 0; }
+        }
+
+        /* === 主内容渐显样式 === */
+        #main-wrapper {
+            opacity: 0; /* 初始隐藏 */
+            transition: opacity 1.5s ease-in-out;
         }
         
         /* 博客列表容器 */
@@ -71,7 +127,7 @@
         #pagination {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 2px solid #333; /* 翻页栏上面的实线 */
+            border-top: 2px solid #333;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -100,58 +156,53 @@
 
         #page-info { color: #666; }
 
-        /* === 底部 Footer 样式 (新增) === */
         footer {
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px dashed #333; /* 底部上面的虚线 */
+            border-top: 1px dashed #333;
             text-align: center;
             color: #555;
             font-size: 0.8em;
         }
         
-        footer a {
-            color: #777;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        
-        footer a:hover {
-            color: #aaa;
-            text-decoration: underline;
-        }
+        footer a { color: #777; text-decoration: none; transition: color 0.2s; }
+        footer a:hover { color: #aaa; text-decoration: underline; }
 
         /* === 手机端适配 === */
         @media (max-width: 600px) {
-            body { padding: 10px; font-size: 16px; }
+            body { padding: 60px 10px 10px 10px; font-size: 16px; }
             .blog-line { flex-direction: column; align-items: flex-start; }
             .time { margin-bottom: 5px; font-size: 0.9em; color: #555; }
             .content { width: 100%; margin-right: 0; }
             .tag { margin-top: 5px; align-self: flex-start; }
-            #pagination { font-size: 0.9em; }
-            .page-btn { padding: 8px 12px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="blog-container"></div>
-
-    <div id="pagination">
-        <button id="btn-prev" class="page-btn" onclick="changePage(-1)">[ < PREV ]</button>
-        <span id="page-info">PAGE 1 / 1</span>
-        <button id="btn-next" class="page-btn" onclick="changePage(1)">[ NEXT > ]</button>
+    <div id="loader">
+        <div class="typing-wrapper">
+            <div id="loader-text">CONNECTING TO SYSTEM...</div>
+        </div>
     </div>
 
-    <footer>
-        <p>Email: <a href="mailto:contact@yuk1no.com">contact@yuk1no.com</a></p>
-        <p>© 2025 TERMINAL BLOG. All systems operational.</p>
-    </footer>
+    <div id="main-wrapper">
+        <div id="blog-container"></div>
+
+        <div id="pagination">
+            <button id="btn-prev" class="page-btn" onclick="changePage(-1)">[ < PREV ]</button>
+            <span id="page-info">PAGE 1 / 1</span>
+            <button id="btn-next" class="page-btn" onclick="changePage(1)">[ NEXT > ]</button>
+        </div>
+
+        <footer>
+            <p>Email: <a href="mailto:contact@yuk1no.com">contact@yuk1no.com</a></p>
+            <p>© 2025 TERMINAL BLOG. All systems operational.</p>
+        </footer>
+    </div>
 
     <script>
-        // === 配置区域 ===
-        const ITEMS_PER_PAGE = 5; 
-        
+        const ITEMS_PER_PAGE = 7; 
         let allPosts = []; 
         let currentPage = 1;
 
@@ -163,7 +214,6 @@
         function renderPosts() {
             const container = document.getElementById('blog-container');
             container.innerHTML = ''; 
-
             const start = (currentPage - 1) * ITEMS_PER_PAGE;
             const end = start + ITEMS_PER_PAGE;
             const postsToShow = allPosts.slice(start, end);
@@ -178,48 +228,40 @@
                 </div>`;
             });
             container.innerHTML = htmlStr;
-
             updatePaginationUI();
-            window.scrollTo(0, 0);
         }
 
         function updatePaginationUI() {
             const totalPages = Math.ceil(allPosts.length / ITEMS_PER_PAGE);
             document.getElementById('page-info').innerText = `PAGE ${currentPage} / ${totalPages || 1}`;
-
             const btnPrev = document.getElementById('btn-prev');
             const btnNext = document.getElementById('btn-next');
-
-            if (currentPage === 1) {
-                btnPrev.classList.add('disabled');
-                btnPrev.disabled = true;
-            } else {
-                btnPrev.classList.remove('disabled');
-                btnPrev.disabled = false;
-            }
-
-            if (currentPage >= totalPages) {
-                btnNext.classList.add('disabled');
-                btnNext.disabled = true;
-            } else {
-                btnNext.classList.remove('disabled');
-                btnNext.disabled = false;
-            }
+            btnPrev.disabled = (currentPage === 1);
+            btnPrev.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
+            btnNext.disabled = (currentPage >= totalPages);
+            btnNext.className = `page-btn ${currentPage >= totalPages ? 'disabled' : ''}`;
         }
 
         function changePage(step) {
             const totalPages = Math.ceil(allPosts.length / ITEMS_PER_PAGE);
-            const newPage = currentPage + step;
-
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
+            if (currentPage + step >= 1 && currentPage + step <= totalPages) {
+                currentPage += step;
                 renderPosts();
+                window.scrollTo(0, 0);
             }
         }
         
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "ArrowLeft") changePage(-1); 
-            if (event.key === "ArrowRight") changePage(1); 
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowLeft") changePage(-1); 
+            if (e.key === "ArrowRight") changePage(1); 
+        });
+
+        // 动画逻辑：等打字结束后显示博客
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-wrapper').style.opacity = '1';
+            }, 3000); // 3秒时间，覆盖了打字2.5s + 0.5s余量
         });
     </script>
 
